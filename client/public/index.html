@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Kill the bees</title>
+    <script src="/lib/vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <button @click="hitSomeBee">Hit Some Bee</button>
+      <table>
+        <tr>
+          <td>Type</td>
+          <td>HitPoints</td>
+        </tr>
+        <tr v-for="bee in bees">
+          <td v-for="key in Object.keys(bee)">
+            {{ key === "type" || key === "hp" ? bee[key] : null }}
+          </td>
+        </tr>
+      </table>
+    </div>
+    <script>
+      const beeGang = JSON.stringify([
+        { type: "Queen", hp: 100, hpPerHit: 8 },
+        { type: "Worker", hp: 75, hpPerHit: 10 },
+        { type: "Worker", hp: 75, hpPerHit: 10 },
+        { type: "Worker", hp: 75, hpPerHit: 10 },
+        { type: "Worker", hp: 75, hpPerHit: 10 },
+        { type: "Worker", hp: 75, hpPerHit: 10 },
+        { type: "Drone", hp: 50, hpPerHit: 12 },
+        { type: "Drone", hp: 50, hpPerHit: 12 },
+        { type: "Drone", hp: 50, hpPerHit: 12 },
+        { type: "Drone", hp: 50, hpPerHit: 12 },
+        { type: "Drone", hp: 50, hpPerHit: 12 },
+        { type: "Drone", hp: 50, hpPerHit: 12 },
+        { type: "Drone", hp: 50, hpPerHit: 12 },
+        { type: "Drone", hp: 50, hpPerHit: 12 }
+      ]);
+      var app = new Vue({
+        el: "#app",
+        data() {
+          return {
+            bees: JSON.parse(beeGang)
+          };
+        },
+        methods: {
+          hitSomeBee: function(ev) {
+            const { bees } = this;
+            const beeCount = bees.length;
+            const beeIdx = Math.floor(Math.random() * beeCount);
+            const bee = bees[beeIdx];
+            this.hitBee(beeIdx, bees);
+          },
+          hitBee: function(beeIdx, bees) {
+            const bee = bees[beeIdx];
+            bee.hp -= bee.hpPerHit;
+            if (bee.hp < 1) {
+              if (bee.type === "Queen") {
+                this.restartGame();
+                return;
+              }
+              this.bees.splice(beeIdx, 1);
+            }
+          },
+          restartGame: function() {
+            this.bees = JSON.parse(beeGang);
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
